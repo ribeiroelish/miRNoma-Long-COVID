@@ -1,0 +1,63 @@
+#Lembrar de baixar o arquivo para umbuntu - https://github.com/ncbi/sra-tools/wiki/02.-Installing-SRA-Toolkit
+#Descompactar o arquivo
+tar -vxzf <o arquivo que você acabou de baixar.tar.gz>
+
+#Entrar na pasta do SRA e depois na pasta bin
+cd <nome da pasta sra completa>/bin
+
+#Verificar o caminho completo da pasta bin do SRA
+pwd
+
+#Adicionar a ferramenta ao PATH - substitua pelo caminho da sua pasta, que você verificou no passo anterior com pdw
+
+#Exemplo do meu caminho:
+echo 'export PATH=$PATH:/home/ELISRIBEIRO/sratoolkit.3.1.1-ubuntu64/bin' >> ~/.bashrc 
+
+echo 'export PATH=$PATH:coloque_seu_caminho_aqui' >> ~/.bashrc 
+
+#Atualizar
+source ~/.bashrc
+
+#Pode voltar para a home
+cd ~
+
+#Verificar se o sistema está encontrando a ferramenta
+which fastq-dump
+
+#Deve retornar algo similar a isso:
+/home/ELISRIBEIRO/sratoolkit.3.1.1-ubuntu64/bin/fastq-dump #Só que com o endereço do seu compuatdor
+
+#Testar se a ferramenta está funcional:
+fastq-dump --stdout -X 2 SRR390728
+
+#Deve retornar o cabeçalho de duas reads:
+
+Read 2 spots for SRR390728
+Written 2 spots for SRR390728
+@SRR390728.1 1 length=72
+CATTCTTCACGTAGTTCTCGAGCCTTGGTTTTCAGCGATGGAGAATGACTTTGACAAGCTGAGAGAAGNTNC
++SRR390728.1 1 length=72
+;;;;;;;;;;;;;;;;;;;;;;;;;;;9;;665142;;;;;;;;;;;;;;;;;;;;;;;;;;;;;96&&&&(
+@SRR390728.2 2 length=72
+AAGTAGGTCTCGTCTGTGTTTTCTACGAGCTTGTGTTCCAGCTGACCCACTCCCTGGGTGGGGGGACTGGGT
++SRR390728.2 2 length=72
+;;;;;;;;;;;;;;;;;4;;;;3;393.1+4&&5&&;;;;;;;;;;;;;;;;;;;;;<9;<;;;;;464262
+
+#Bioproject exemplo para baixar: SRR23875742
+
+#Opção 1 - com prefetch depois fasterq-dump
+prefetch SRR23875742 #Aguardar o download completo do arquivo SRR23875742.sra
+fasterq-dump SRR23875742.sra #Para "extrair" os arquivos fastq
+
+#Opção 2 - fasterq-dump direto
+fasterq-dump SRR23875742 #Vai baixar e extrair os arquivos fastq
+
+#Para baixar vários de uma lista:
+#1)coloque todos os SSRs, um embaixo do outro, em um arquivo txt, por exemplo: lista_SRR.txt
+SRR23875742
+SRR23875743
+SRR23875744
+
+#2) Rode o comando abaixo
+for SRR in $(cat lista_SRR.txt); do prefetch "$SRR" && fasterq-dump "$SRR"; done
+
